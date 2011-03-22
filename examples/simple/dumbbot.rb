@@ -14,12 +14,13 @@ irc = Net::YAIL.new(
   :username   => 'Frakking Bot',
   :realname   => 'John Botfrakker',
   :nicknames  => [opt['nick']],
-  :loud       => opt['loud']
 )
 
+irc.log.level = Logger::DEBUG if opt['loud']
+
 # Register handlers
-irc.prepend_handler(:incoming_welcome) {|text, args| irc.join('#bots') }
-irc.prepend_handler(:incoming_invite) {|full, user, channel| irc.join(channel) }
+irc.heard_welcome { |e| irc.join('#bots') }
+irc.on_invite     { |e| irc.join(e.channel) }
 
 # Start the bot and enjoy the endless loop
 irc.start_listening!
